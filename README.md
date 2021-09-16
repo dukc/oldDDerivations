@@ -4,6 +4,10 @@ but with an ability to choose an older DMD instead. You might want to use this i
 you have some outdated D code, and you want to use Nix but don't want to spend
 time backporting the D compiler derivation yourself.
 
+These derivations will also try to be compatible with both the latest Nixos and
+Unstable channels, so you might also want to use these if you want an up-to-date
+DMD without having to subscripbe to the unstable channel for just that.
+
 To build:
 ```bash
 nix-build -E 'with import <nixpkgs> {}; callPackage ./default.nix {inherit (darwin.apple_sdk.frameworks) Foundation;}'
@@ -21,6 +25,6 @@ patch version. Former non-divisable minor versions will also be of secondary
 importance when testing and fixing any possible breakage.
 
 I currently test only on NixOS, and I'm not an experienced packager, so mistakes are
-likely. Patches welcome!
+likely. Issue reports and patches welcome!
 
 MIT License carried over from NixPkgs with no additional conditions from me.
