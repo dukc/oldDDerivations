@@ -6,7 +6,7 @@ time backporting the D compiler derivation yourself.
 
 These derivations will also try to be compatible with both the latest Nixos and
 Unstable channels, so you might also want to use these if you want an up-to-date
-DMD without having to subscripbe to the unstable channel for just that.
+DMD without having to subscribe to the unstable channel for just that.
 
 To build:
 ```bash
