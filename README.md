@@ -12,6 +12,12 @@ To build:
 ```bash
 nix-build -E 'with import <nixpkgs> {}; callPackage ./default.nix {inherit (darwin.apple_sdk.frameworks) Foundation;}'
 ```
+
+or to install to your default environment:
+```bash
+nix-env -iE  'f: with import <nixpkgs> {}; callPackage ./default.nix {inherit (darwin.apple_sdk.frameworks) Foundation;}'
+```
+
 Replace `<nixpkgs>` with the channel you wish to use, and `./default.nix` with
 any of the version number filenames if you wish to compile an older DMD version. If
 you're not on Darwin, you can replace `inherit (darwin.apple_sdk.frameworks) Foundation;`
