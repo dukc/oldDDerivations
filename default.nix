@@ -2,8 +2,8 @@
 , makeWrapper, unzip, which, writeTextFile
 , curl, tzdata, gdb, Foundation, git, callPackage
 , targetPackages, fetchpatch, bash
-, HOST_DMD? "${callPackage ./bootstrap.nix { }}/bin/dmd"
 , version? "2.098.0"
+, HOST_DMD? "${callPackage ./bootstrap.nix { }}/bin/dmd"
 , dmdSha256? "03pk278rva7f0v464i6av6hnsac1rh22ppxxrlai82p06i9w7lxk"
 , druntimeSha256? "0p75h8gigc5yj090k7qxmzz04dbpkab890l2sv1mdsxvgabch08q"
 , phobosSha256? "0kdr9857kckpzsk59wyd7wvjd0d3ch9amqkq2y7ipx70rv9y6m0r"
@@ -61,16 +61,12 @@ stdenv.mkDerivation rec {
   # Phobos at same time if that's required
   patchPhase =
 
-  # DDocYear test used to have a hardcoded year, this patches it to use the
-  # current one
-  lib.optionalString (builtins.compareVersions version "2.091.0" < 0) ''
+  # Migrates D1-style operator overloads in DMD source, to allow building with
+  # a newer DMD
+  lib.optionalString (builtins.compareVersions version "2.088.0" < 0) ''
     patch -p1 -F3 --directory=dmd -i ${(fetchpatch {
-      url = "https://github.com/dlang/dmd/commit/d2df0b34a72994d14b6da47ce4cb3761987161fd.patch";
-      sha256 = "0sbqadp08bkw5qf2dx4zvbm7idv2ll4i4id9zh36qzkr0vq3rl1k";
-    })}
-    patch -p1 -F3 --directory=dmd -i ${(fetchpatch {
-      url = "https://github.com/dlang/dmd/commit/7553454bac4bebf0e85bf8311627e72c0d8671be.patch";
-      sha256 = "0gvracnn3k65kyi9xic52avnpgk4aq4qljkh64jkh281q8x5i9dk";
+      url = "https://github.com/dlang/dmd/commit/c4d33e5eb46c123761ac501e8c52f33850483a8a.patch";
+      sha256 = "0rhl9h3hsi6d0qrz24f4zx960cirad1h8mm383q6n21jzcw71cp5";
     })}
   ''
 
@@ -80,21 +76,30 @@ stdenv.mkDerivation rec {
       url = "https://github.com/dlang/druntime/commit/438990def7e377ca1f87b6d28246673bb38022ab.patch";
       sha256 = "0nxzkrd1rzj44l83j7jj90yz2cv01na8vn9d116ijnm85jl007b4";
     })}
-
   ''
 
   + postPatch;
 
+
   postPatch =
   ''
     patchShebangs .
+  ''
 
-  '' + lib.optionalString (version == "2.092.1") ''
+  # This one has tested against a hardcoded year, then against a current year on
+  # and off again. It just isn't worth it to patch all the historical versions
+  # of it, so just remove it until the most recent change.
+  + lib.optionalString (builtins.compareVersions version "2.091.0" < 0) ''
+    rm dmd/test/compilable/ddocYear.d
+  ''
+
+  + lib.optionalString (version == "2.092.1") ''
     rm dmd/test/dshell/test6952.d
   '' + lib.optionalString (builtins.compareVersions "2.092.1" version < 0) ''
     substituteInPlace dmd/test/dshell/test6952.d --replace "/usr/bin/env bash" "${bash}/bin/bash"
+  ''
 
-  '' + ''
+  + ''
     rm dmd/test/runnable/gdb1.d
     rm dmd/test/runnable/gdb10311.d
     rm dmd/test/runnable/gdb14225.d
@@ -104,8 +109,9 @@ stdenv.mkDerivation rec {
     rm dmd/test/runnable/gdb15729.sh
     rm dmd/test/runnable/gdb4149.d
     rm dmd/test/runnable/gdb4181.d
+  ''
 
-  '' + lib.optionalString stdenv.isLinux ''
+  + lib.optionalString stdenv.isLinux ''
     substituteInPlace phobos/std/socket.d --replace "assert(ih.addrList[0] == 0x7F_00_00_01);" ""
   '' + lib.optionalString stdenv.isDarwin ''
     substituteInPlace phobos/std/socket.d --replace "foreach (name; names)" "names = []; foreach (name; names)"
