@@ -60,13 +60,30 @@ stdenv.mkDerivation rec {
   # Not using patches option to make it easy to patch, for example, dmd and
   # Phobos at same time if that's required
   patchPhase =
-  lib.optionalString (builtins.compareVersions version "2.092.1" <= 0) ''
+
+  # DDocYear test used to have a hardcoded year, this patches it to use the
+  # current one
+  lib.optionalString (builtins.compareVersions version "2.091.0" < 0) ''
+    patch -p1 -F3 --directory=dmd -i ${(fetchpatch {
+      url = "https://github.com/dlang/dmd/commit/d2df0b34a72994d14b6da47ce4cb3761987161fd.patch";
+      sha256 = "0sbqadp08bkw5qf2dx4zvbm7idv2ll4i4id9zh36qzkr0vq3rl1k";
+    })}
+    patch -p1 -F3 --directory=dmd -i ${(fetchpatch {
+      url = "https://github.com/dlang/dmd/commit/7553454bac4bebf0e85bf8311627e72c0d8671be.patch";
+      sha256 = "0gvracnn3k65kyi9xic52avnpgk4aq4qljkh64jkh281q8x5i9dk";
+    })}
+  ''
+
+  # Fixes C++ tests that compiled on older G++ but not on the current one
+  + lib.optionalString (builtins.compareVersions version "2.092.1" <= 0) ''
     patch -p1 -F3 --directory=druntime -i ${(fetchpatch {
       url = "https://github.com/dlang/druntime/commit/438990def7e377ca1f87b6d28246673bb38022ab.patch";
       sha256 = "0nxzkrd1rzj44l83j7jj90yz2cv01na8vn9d116ijnm85jl007b4";
     })}
 
-  '' + postPatch;
+  ''
+
+  + postPatch;
 
   postPatch =
   ''
