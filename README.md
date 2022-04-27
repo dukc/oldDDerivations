@@ -4,7 +4,7 @@ but with an ability to choose an older DMD instead. You might want to use this i
 you have some outdated D code, and you want to use Nix but don't want to spend
 time backporting the D compiler derivation yourself.
 
-These derivations will also try to be compatible with both the latest Nixos and
+These derivations will also try to be compatible with both the latest NixOS and
 Unstable channels, so you might also want to use these if you want an up-to-date
 DMD without having to subscribe to the unstable channel for just that.
 
@@ -26,9 +26,9 @@ with `Foundation=null;`
 The aim is to support the last patch version of minor DMD versions divisable by four,
 plus the latest stable. For a reasonable timeframe - the intention is not to support
 everything back to 2.00. Minor versions that are not divisable by 4 are accepted
-and kept, but no effort is made to support all of them, or port them to latest
-patch version. Former non-divisable minor versions will also be of secondary
-importance when testing and fixing any possible breakage.
+and kept, but no effort is made to support all of them. Former non-divisable
+minor versions will also be of secondary importance when testing and fixing any
+possible breakage.
 
 I currently test only on NixOS, and I'm not an experienced packager, so mistakes are
 likely. Issue reports and patches welcome!
