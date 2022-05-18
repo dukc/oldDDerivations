@@ -63,15 +63,15 @@ stdenv.mkDerivation rec {
 
   # Migrates D1-style operator overloads in DMD source, to allow building with
   # a newer DMD
-  lib.optionalString (builtins.compareVersions version "2.088.0" < 0) ''
+  lib.optionalString (lib.versionOlder version "2.088.0") ''
     patch -p1 -F3 --directory=dmd -i ${(fetchpatch {
       url = "https://github.com/dlang/dmd/commit/c4d33e5eb46c123761ac501e8c52f33850483a8a.patch";
       sha256 = "0rhl9h3hsi6d0qrz24f4zx960cirad1h8mm383q6n21jzcw71cp5";
     })}
   ''
 
-  # Fixes C++ tests that compiled on older G++ but not on the current one
-  + lib.optionalString (builtins.compareVersions version "2.092.1" <= 0) ''
+  # Fixes C++ tests that compiled on older C++ but not on the current one
+  + lib.optionalString (lib.versionOlder version "2.092.2") ''
     patch -p1 -F3 --directory=druntime -i ${(fetchpatch {
       url = "https://github.com/dlang/druntime/commit/438990def7e377ca1f87b6d28246673bb38022ab.patch";
       sha256 = "0nxzkrd1rzj44l83j7jj90yz2cv01na8vn9d116ijnm85jl007b4";
@@ -89,13 +89,13 @@ stdenv.mkDerivation rec {
   # This one has tested against a hardcoded year, then against a current year on
   # and off again. It just isn't worth it to patch all the historical versions
   # of it, so just remove it until the most recent change.
-  + lib.optionalString (builtins.compareVersions version "2.091.0" < 0) ''
+  + lib.optionalString (lib.versionOlder version "2.091.0") ''
     rm dmd/test/compilable/ddocYear.d
   ''
 
   + lib.optionalString (version == "2.092.1") ''
     rm dmd/test/dshell/test6952.d
-  '' + lib.optionalString (builtins.compareVersions "2.092.1" version < 0) ''
+  '' + lib.optionalString (lib.versionAtLeast version "2.092.2") ''
     substituteInPlace dmd/test/dshell/test6952.d --replace "/usr/bin/env bash" "${bash}/bin/bash"
   ''
 
