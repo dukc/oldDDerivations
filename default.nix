@@ -2,11 +2,11 @@
 , makeWrapper, unzip, which, writeTextFile
 , curl, tzdata, gdb, Foundation, git, callPackage
 , targetPackages, fetchpatch, bash
-, version? "2.099.1"
+, version? "2.100.0"
 , HOST_DMD? "${callPackage ./bootstrap.nix { }}/bin/dmd"
-, dmdSha256? "1m7ly5f9hlxzp6qjsapizf9lkxiakh4qjk293zlwgsxv79dmmqnh"
-, druntimeSha256? "1dfla77mjk8pj87byn0svqhmayljgpdrrrmmbw9041zvp4mddl96"
-, phobosSha256? "0bvihq94hzr239n74z2j1xardxw8p5jlwq5y1yijq90vdbv2z8sc"
+, dmdSha256? "1bhd7pjddn629zmxyk4wsmfvpjxs0kvyc4y3jb4p25i5cq2ci8df"
+, druntimeSha256? "1a3lf6ws81j4yw8z4ybdcpja3wkyz6lvkpdivznmjqmghzq4qhm0"
+, phobosSha256? "12bwznrnlg1nip2c5rh24fappyp3zbhx8wg15ggx1p628p4y4kfi"
 }:
 
 let
