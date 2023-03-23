@@ -130,7 +130,7 @@ stdenv.mkDerivation rec {
     # Grep'd string changed with gdb 12
     #   https://issues.dlang.org/show_bug.cgi?id=23198
     substituteInPlace ${druntimePrefix}/test/exceptions/Makefile \
-      --replace 'in D main (' 'in _Dmain ('
+      --replace 'D main (' '_Dmain ('
     # We're using gnused on all platforms
     substituteInPlace ${druntimePrefix}/test/coverage/Makefile \
       --replace 'freebsd osx' 'none'
@@ -212,28 +212,41 @@ stdenv.mkDerivation rec {
     if [ -z $enableParallelChecking ]; then
       checkJobs=1
     fi
+
     NIX_ENFORCE_PURITY= \
       make -C ${dmdPrefix}/test $checkFlags CC=$CXX SHELL=$SHELL -j$checkJobs N=$checkJobs
+
     NIX_ENFORCE_PURITY= \
       make -C ${druntimePrefix} -f posix.mak unittest $checkFlags -j$checkJobs
+
     NIX_ENFORCE_PURITY= \
       make -C phobos -f posix.mak unittest $checkFlags -j$checkJobs DFLAGS="-version=TZDatabaseDir -version=LibcurlPath -J$PWD"
+
     runHook postBuild
   '';
 
   installPhase =
   ''
     runHook preInstall
+
     install -Dm755 ${pathToDmd} $out/bin/dmd
+
     installManPage dmd/docs/man/man*/*
+
     mkdir -p $out/include/dmd
+
     cp -r {${druntimePrefix}/import/*,phobos/{std,etc}} $out/include/dmd/
+
     mkdir $out/lib
+
     cp phobos/generated/${osname}/release/${bits}/libphobos2.* $out/lib/
+
     wrapProgram $out/bin/dmd \
       --prefix PATH ":" "${targetPackages.stdenv.cc}/bin" \
       --set-default CC "${targetPackages.stdenv.cc}/bin/cc"
+
     substitute ${dmdConfFile} "$out/bin/dmd.conf" --subst-var out
+
     runHook postInstall
   '';
 
