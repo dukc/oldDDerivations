@@ -8,6 +8,8 @@ These derivations will also try to be compatible with both the latest NixOS and
 Unstable channels, so you might also want to use these if you want an up-to-date
 DMD without having to subscribe to the unstable channel for just that.
 
+*NOTE*: This project has almost entirely been merged to and superseded by [dlang-nix](https://github.com/petarkirov/dlang-nix), which I'm now developing instead of this. Unlike this project dlang-nix has support for Nix flakes, CI environment, dub and LDC derivations, and more. As of writing, if you need versions 2.084, 2.087 or 2.088 you'll still need these but otherwise I recommend dlang-nix instead.
+
 To build:
 ```bash
 nix-build -E 'with import <nixpkgs> {}; callPackage ./default.nix {inherit (darwin.apple_sdk.frameworks) Foundation;}'
